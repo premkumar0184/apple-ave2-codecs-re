@@ -148,6 +148,17 @@ int SubmitProResRAW_8K_Frame(
     MMIO_WRITE32(mmioBaseA2 + 0x0018, (uint32_t)(bayerPlanesDartVA[3] & 0xFFFFFFFF));
     MMIO_WRITE32(mmioBaseA2 + 0x001C, (uint32_t)(bayerPlanesDartVA[3] >> 32));
 
+    // Output Bitstream Buffer Programming
+    MMIO_WRITE32(mmioBaseA1 + 0x0030, (uint32_t)(outputBitstreamDartVA & 0xFFFFFFFF));
+    MMIO_WRITE32(mmioBaseA1 + 0x0034, (uint32_t)(outputBitstreamDartVA >> 32));
+    uint64_t bitstreamLowerVA = outputBitstreamDartVA + (maxOutputBytes / 2);
+    MMIO_WRITE32(mmioBaseA2 + 0x0030, (uint32_t)(bitstreamLowerVA & 0xFFFFFFFF));
+    MMIO_WRITE32(mmioBaseA2 + 0x0034, (uint32_t)(bitstreamLowerVA >> 32));
+
+    // Stride Configuration
+    MMIO_WRITE32(mmioBaseA1 + 0x0028, bayerStrideBytes);
+    MMIO_WRITE32(mmioBaseA2 + 0x0028, bayerStrideBytes);
+
     // Arm RAW Rate Control Register
     MMIO_WRITE32(mmioBaseA1 + 0x0048, 0x00020000); // 128 KB max row budget
     MMIO_WRITE32(mmioBaseA2 + 0x0048, 0x00020000);
